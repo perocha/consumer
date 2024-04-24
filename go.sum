@@ -58,6 +58,16 @@ github.com/onsi/ginkgo v1.8.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+W
 github.com/onsi/gomega v1.5.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/perocha/goadapters v1.0.6 h1:Hn2909bvSFEVuKUbUF4zh94uxNc+f1lvqjVHLATiI8k=
 github.com/perocha/goadapters v1.0.6/go.mod h1:yrX+acLnpls9WnEwmbc3JI/axDP7NmUUzvO2eF694aE=
+github.com/perocha/goadapters v1.0.7 h1:ONV2SwZ0d7OywygAK7rppFvu+Xl3Ih1isF5n8s+uZcE=
+github.com/perocha/goadapters v1.0.7/go.mod h1:yrX+acLnpls9WnEwmbc3JI/axDP7NmUUzvO2eF694aE=
+github.com/perocha/goadapters v1.0.8 h1:kCPz+bqtjokPdTVWKIAVtx8oZvjA7fkPUi6sfhMTmOc=
+github.com/perocha/goadapters v1.0.8/go.mod h1:yrX+acLnpls9WnEwmbc3JI/axDP7NmUUzvO2eF694aE=
+github.com/perocha/goadapters v1.0.9 h1:DyWIR0awXh0rWjIXs795cmpz0S+LnmfqBpln2Qo+IA4=
+github.com/perocha/goadapters v1.0.9/go.mod h1:yrX+acLnpls9WnEwmbc3JI/axDP7NmUUzvO2eF694aE=
+github.com/perocha/goadapters v1.0.10 h1:KD5sBUEUG9/1A1oMPV1Ei5Lnl68FlUcOmEWw40aRtpg=
+github.com/perocha/goadapters v1.0.10/go.mod h1:yrX+acLnpls9WnEwmbc3JI/axDP7NmUUzvO2eF694aE=
+github.com/perocha/goadapters v1.0.23 h1:eGUK6k8CpXcKoUFY4+7Mo5Ium+nRNkJX9CmVCQgylQQ=
+github.com/perocha/goadapters v1.0.23/go.mod h1:yrX+acLnpls9WnEwmbc3JI/axDP7NmUUzvO2eF694aE=
 github.com/perocha/goutils v1.0.4 h1:AWVVOl7BBa8Gbd4H/Pxv2UTpL5wHraMG3Hg5tXZDM4A=
 github.com/perocha/goutils v1.0.4/go.mod h1:IPL5Cq/WHGOhpGcICI1Xt7U3Ptobr9RNfr/so1/ajoM=
 github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c h1:+mdjkGKdHQG3305AYmdv1U2eRNDiU2ErMBj1gwrq8eQ=

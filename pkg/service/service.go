@@ -4,17 +4,17 @@ import (
 	"context"
 	"os"
 
-	"github.com/perocha/goadapters/messaging"
+	"github.com/perocha/goadapters/messaging/message"
 	"github.com/perocha/goutils/pkg/telemetry"
 )
 
 // ServiceImpl is a struct implementing the Service interface.
 type ServiceImpl struct {
-	consumerInstance messaging.MessagingSystem
+	consumerInstance message.MessagingSystem
 }
 
 // Creates a new instance of ServiceImpl.
-func Initialize(ctx context.Context, consumer messaging.MessagingSystem) *ServiceImpl {
+func Initialize(ctx context.Context, consumer message.MessagingSystem) *ServiceImpl {
 	telemetryClient := telemetry.GetTelemetryClient(ctx)
 	telemetryClient.TrackTrace(ctx, "services::Initialize::Initializing service logic", telemetry.Information, nil, true)
 
@@ -41,34 +41,24 @@ func (s *ServiceImpl) Start(ctx context.Context, signals <-chan os.Signal) error
 		select {
 		case message := <-channel:
 			// Update the context with the operation ID
-			ctx = context.WithValue(ctx, telemetry.OperationIDKeyContextKey, message.OperationID)
+			ctx = context.WithValue(ctx, telemetry.OperationIDKeyContextKey, message.GetOperationID())
 
-			if message.Error == nil {
-				// New message received in channel. Process the event.
-				telemetryClient.TrackTrace(ctx, "services::Start::Received message", telemetry.Information, nil, true)
-
-				// Cast the message data to a map[string]interface{} to extract the event data
-				eventData, ok := message.Data.(map[string]interface{})
-				if !ok {
-					// Error received. In this case we'll discard message but report an exception
-					properties := map[string]string{
-						"Error": "Failed to cast message to map[string]interface{}",
-					}
-					telemetryClient.TrackException(ctx, "services::Start::Error processing message", nil, telemetry.Error, properties, true)
-					continue
-				}
-
+			if message.GetError() == nil {
 				// If we reach this point, we have a valid event. Process it!!!
-				propTelemetry := map[string]string{
-					"Event": eventData["event"].(string),
+				// Log in console content of eventData
+				telemetryProps := map[string]string{
+					"OperationID": message.GetOperationID(),
+					"Status":      message.GetStatus(),
+					"Command":     message.GetCommand(),
 				}
-				telemetryClient.TrackTrace(ctx, "services::ProcessEvent::Processing event", telemetry.Information, propTelemetry, true)
+
+				telemetryClient.TrackTrace(ctx, "services::ProcessEvent::Processing event", telemetry.Information, telemetryProps, true)
 			} else {
 				// Error received. In this case we'll discard message but report an exception
 				properties := map[string]string{
-					"Error": message.Error.Error(),
+					"Error": message.GetError().Error(),
 				}
-				telemetryClient.TrackException(ctx, "services::Start::Error processing message", message.Error, telemetry.Error, properties, true)
+				telemetryClient.TrackException(ctx, "services::Start::Error processing message", message.GetError(), telemetry.Error, properties, true)
 			}
 		case <-ctx.Done():
 			telemetryClient.TrackTrace(ctx, "services::Start::Context canceled. Stopping event listener.", telemetry.Information, nil, true)

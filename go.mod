@@ -3,7 +3,7 @@ module github.com/perocha/consumer
 go 1.22.2
 
 require (
-	github.com/perocha/goadapters v1.0.6
+	github.com/perocha/goadapters v1.0.23
 	github.com/perocha/goutils v1.0.4
 )
 
