@@ -31,22 +31,23 @@ func main() {
 		log.Fatalf("Main::Fatal error::Failed to refresh configuration %s\n", err.Error())
 	}
 
-	// Initialize App Insights
-	telemetryClient, err := telemetry.Initialize(cfg.AppInsightsInstrumentationKey, SERVICE_NAME)
+	// Initialize telemetry package
+	telemetryConfig := telemetry.NewXTelemetryConfig(cfg.AppInsightsInstrumentationKey, SERVICE_NAME, "debug", 1)
+	xTelemetry, err := telemetry.NewXTelemetry(telemetryConfig)
 	if err != nil {
-		log.Fatalf("Main::Fatal error::Failed to initialize App Insights %s\n", err.Error())
+		log.Fatalf("Main::Fatal error::Failed to initialize XTelemetry %s\n", err.Error())
 	}
 	// Add telemetry object to the context, so that it can be reused across the application
-	ctx := context.WithValue(context.Background(), telemetry.TelemetryContextKey, telemetryClient)
+	ctx := context.WithValue(context.Background(), telemetry.TelemetryContextKey, xTelemetry)
 
 	// Initialize EventHub consumer adapter
 	consumerInstance, err := eventhub.ConsumerInitializer(ctx, cfg.EventHubNameConsumer, cfg.EventHubConsumerConnectionString, cfg.CheckpointStoreContainerName, cfg.CheckpointStoreConnectionString)
 	if err != nil {
-		telemetryClient.TrackException(ctx, "Main::Fatal error::Failed to initialize EventHub", err, telemetry.Critical, nil, true)
+		xTelemetry.Error(ctx, "Main::Fatal error::Failed to initialize EventHub", telemetry.String("error", err.Error()))
 		log.Fatalf("Main::Fatal error::Failed to initialize EventHub %s\n", err.Error())
 	}
 
-	telemetryClient.TrackTrace(ctx, "Main::All adapters initialized successfully", telemetry.Information, nil, true)
+	xTelemetry.Info(ctx, "Main::EventHub initialized successfully")
 
 	// Create a channel to listen for termination signals
 	signals := make(chan os.Signal, 1)
@@ -56,13 +57,13 @@ func main() {
 	serviceInstance := service.Initialize(ctx, consumerInstance)
 	go serviceInstance.Start(ctx, signals)
 
-	telemetryClient.TrackTrace(ctx, "Main::Service layer initialized successfully", telemetry.Information, nil, true)
+	xTelemetry.Info(ctx, "Main::Service layer initialized successfully")
 
 	// Infinite loop
 	for {
 		select {
 		case <-signals:
-			telemetryClient.TrackTrace(ctx, "Main::Received termination signal", telemetry.Information, nil, true)
+			xTelemetry.Info(ctx, "Main::Received termination signal")
 			serviceInstance.Stop(ctx)
 			return
 		case <-time.After(2 * time.Minute):
